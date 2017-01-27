@@ -1,3 +1,4 @@
+from ast import literal_eval
 from uuid import uuid4 as uuid
 
 from geopyter.core.vis_libs.d3 import d3_generator
@@ -36,13 +37,19 @@ class VisualizationGenerator:
     def create_visulization(self):
         """Sends the visualization request to the specified visualization
             library"""
+        # first pass at loading data through python
+        self._load_data()
             
         # TODO: better error handling
         if (self.vis_lib not in vis_libs):
             return {'output': 'ERROR: no visualization library found.'}
         
         return vis_libs[self.vis_lib](
-            self.data_path,
+            self.data,
             self.vis_type,
             self.vis_params
         )
+    
+    def _load_data(self):
+        f = open(self.data_path, 'r')
+        self.data = literal_eval(f.read())

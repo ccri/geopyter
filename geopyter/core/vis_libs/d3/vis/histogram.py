@@ -1,5 +1,8 @@
-def make(data_path, vis_params):
+def make(data, vis_params):
     uuid = vis_params['id']
+
+    # first pass at axis control
+    data_string = ','.join(str(d[vis_params['x']]) for d in data)
 
     js_template = (
         "requirejs(['nbextensions/d3.min'], function(d3) {"
@@ -20,10 +23,11 @@ def make(data_path, vis_params):
         "    g = svg.append('g')"
         "        .attr('transform', 'translate('+mgn.left+','+mgn.top+')');"
         ""
-        "var xhr = new XMLHttpRequest();"
-        "xhr.onreadystatechange = function() {"
-        "    if (this.readyState == 4 && this.status == 200) {"
-        "        var data = JSON.parse(this.response);"
+        # "var xhr = new XMLHttpRequest();"
+        # "xhr.onreadystatechange = function() {"
+        # "    if (this.readyState == 4 && this.status == 200) {"
+        # "        var data = JSON.parse(this.response);"
+        "        var data = [" + data_string + "];"
         "        console.log(data);"
         "        var histogram = d3.histogram()(data);"
         "        var xScale = d3.scaleLinear().rangeRound([0, wdt])"
@@ -60,10 +64,10 @@ def make(data_path, vis_params):
         "         .attr('class', 'axis axis--x')"
         "         .attr('transform', 'translate(0,'+hgt+')')"
         "         .call(xAxis);"
-        "    }"
-        "};"
-        "xhr.open('GET', '" + data_path + "', true);"
-        "xhr.send();"
+        # "    }"
+        # "};"
+        # "xhr.open('GET', '" + data_path + "', true);"
+        # "xhr.send();"
         "});"
     )
 
