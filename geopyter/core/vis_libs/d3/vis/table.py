@@ -5,19 +5,11 @@ def make(data, vis_params):
     column_string = ','.join("'"+str(d)+"'" for d in data[0].keys())
 
     js_template = (
-        # "requirejs(['nbextensions/d3.min'], function(d3) {"
-        # "var data = [" + data_string + "];"
-        # "var columns = [" + column_string + "];"
-        # "console.log(data);"
-        # "console.log(columns);"
-        # "});"
-
         "requirejs(['nbextensions/d3.min'], function(d3) {"
-        ""
         "var data = [" + data_string + "];"
         "var columns = [" + column_string + "];"
         ""
-        "// utility sorting functions"
+        "/* utility sorting functions */"
         "var stringCompare = function(a, b, ascending) {"
         "    a = a.toLowerCase();"
         "    b = b.toLowerCase();"
@@ -50,8 +42,8 @@ def make(data, vis_params):
         "        .on('click', function(d) {"
         "            rows.sort(function(a, b) {"
         "                if (typeof a[d] == 'string')"
-        "                    return a == null || b == null ? 0 : stringCompare(a[d], b[d], ascending);"
-        "                return a == null || b == null ? 0 : numberCompare(a[d], b[d], ascending);"
+        "                    return (a === null || b === null ? 0 : stringCompare(a[d], b[d], ascending));"
+        "                return (a === null || b === null ? 0 : numberCompare(a[d], b[d], ascending));"
         "            });"
         "            ascending = !ascending;"
         "        });"

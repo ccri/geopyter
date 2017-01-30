@@ -29,7 +29,14 @@ class VisualizationGenerator:
 
         # generate a unique id for the visualization element
         uu_id = str(uuid())
+
+        # make first character of UUID alphabetic,
+        # html ids cannot start with a number
         params['id'] = uu_id[:0] + 'g' + uu_id[1:]
+
+        # check for default %geopyter call
+        if ('vis' not in params):
+            params['vis'] = 'd3.table'
         self.vis_lib, self.vis_type = params.pop('vis').split('.')
         self.data_path = params.pop('data')
         self.vis_params = params
