@@ -44,7 +44,12 @@ class GeopyterMagic(Magics):
             key, value = arg.split('(')
             cleaned_args[key] = value
 
-        r = requests.post('http://localhost:8888/geopyter', json=cleaned_args)
+        url = 'http://localhost:8888/'
+        client = requests.Session()
+        client.get(url)
+        headers = {'X-XSRFToken': client.cookies['_xsrf']}
+        r = client.post(url+'geopyter', json=cleaned_args, headers=headers)
+        
         return Javascript(r.json()['js_code'])
 
 def load_ipython_extension(ipython):

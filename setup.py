@@ -9,6 +9,7 @@ setup(
     install_requires=[
         'ipython',
         'jupyter',
+        'requests',
         'tornado'
     ],
     data_files=[
