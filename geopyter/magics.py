@@ -44,13 +44,18 @@ class GeopyterMagic(Magics):
             key, value = arg.split('(')
             cleaned_args[key] = value
 
+        # XSRF token setup
         url = 'http://localhost:8888/'
         client = requests.Session()
+        # start session to obtain token
         client.get(url)
+        # add token to request header
         headers = {'X-XSRFToken': client.cookies['_xsrf']}
         r = client.post(url+'geopyter', json=cleaned_args, headers=headers)
+
+        css = 'http://localhost:8888/nbextensions/geopyter.css'
         
-        return Javascript(r.json()['js_code'])
+        return Javascript(r.json()['js_code'], css=css)
 
 def load_ipython_extension(ipython):
     ipython.register_magics(GeopyterMagic)
