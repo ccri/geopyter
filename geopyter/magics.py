@@ -53,7 +53,10 @@ class GeopyterMagic(Magics):
         headers = {'X-XSRFToken': client.cookies['_xsrf']}
         r = client.post(url+'geopyter', json=cleaned_args, headers=headers)
 
-        css = 'http://localhost:8888/nbextensions/geopyter.css'
+        css = [
+            'http://localhost:8888/nbextensions/geopyter.css',
+            'http://localhost:8888/nbextensions/leaflet.css'
+        ]
         
         return Javascript(r.json()['js_code'], css=css)
 

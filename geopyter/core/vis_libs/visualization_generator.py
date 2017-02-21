@@ -2,12 +2,14 @@ from ast import literal_eval
 from uuid import uuid4 as uuid
 
 from geopyter.core.vis_libs.d3 import d3_generator
+from geopyter.core.vis_libs.leaflet import leaflet_generator
 
 # dict of currently supported visualization libraries
 # key = visualization library
 # val = default create_visualization() function for visualization library
 vis_libs = {
-    'd3': d3_generator.create_visualization
+    'd3': d3_generator.create_visualization,
+    'leaflet': leaflet_generator.create_visualization
 }
 
 class VisualizationGenerator:
