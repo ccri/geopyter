@@ -1,8 +1,8 @@
 from ast import literal_eval
 from uuid import uuid4 as uuid
 
-from geopyter.core.vis_libs.d3 import d3_generator
-from geopyter.core.vis_libs.leaflet import leaflet_generator
+from geopyter.core.vis_gen.d3 import d3_generator
+from geopyter.core.vis_gen.leaflet import leaflet_generator
 
 # dict of currently supported visualization libraries
 # key = visualization library
@@ -37,7 +37,7 @@ class VisualizationGenerator:
         params['id'] = uu_id[:0] + 'g' + uu_id[1:]
 
         # check for default %geopyter call
-        if ('vis' not in params):
+        if (not params['vis']):
             params['vis'] = 'd3.table'
         self.vis_lib, self.vis_type = params.pop('vis').split('.')
         self.data_path = params.pop('data')

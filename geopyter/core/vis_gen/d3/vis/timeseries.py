@@ -41,7 +41,7 @@ def make(data, vis_params):
         "    .range([mgn.left, wdt]);"
         ""
         "let xAxis = d3.axisBottom(xScale)"
-        "    .tickFormat(d3.timeFormat('%Y-%m-%d'));"
+        "    .tickFormat(d3.timeFormat('%Y-%m-%d'));" # could be a parameter
         ""
         "let yScale = d3.scaleLinear()"
         "    .domain(["
