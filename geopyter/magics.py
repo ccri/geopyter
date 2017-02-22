@@ -1,16 +1,14 @@
-from IPython.core.magic import (Magics, magics_class, line_magic, cell_magic,
-    line_cell_magic)
+from IPython.core.magic import (Magics, magics_class, line_magic)
 from IPython.display import (HTML, Javascript)
 
-import ast
-import os
+import argparse
 import requests
 
 @magics_class
 class GeopyterMagic(Magics):
 
-    @line_cell_magic
-    def geopyter(self, line, cell=None):
+    @line_magic
+    def geopyter(self, line=None):
         """Direct interface to the /geopyter endpoint to create visualizations
 
         Parses arguments given to the magic into JSON and sends it to /geopyter.
@@ -31,18 +29,38 @@ class GeopyterMagic(Magics):
             through IPython.display.Javascript()
         """
 
-        # append cell to line if there is spillover
-        if cell is not None:
-            line += ' ' + cell.replace('\n', ' ')
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--data',
+                            metavar='data',
+                            type=str,
+                            nargs='?',
+                            default='',
+                            help='path to the data file')
+        parser.add_argument('--vis',
+                            metavar='vis',
+                            type=str,
+                            nargs='?',
+                            default=None,
+                            help='type of visualization')
+        parser.add_argument('--x',
+                            metavar='x',
+                            type=str,
+                            nargs='?',
+                            default=None,
+                            help='value to treat as x')
+        parser.add_argument('--y',
+                            metavar='y',
+                            type=str,
+                            nargs='?',
+                            default=None,
+                            help='value to treat as y')
 
-        args = line.strip().split(' ')
-
-        # clean the arguments to be able to pass them as JSON to /geopyter
-        cleaned_args = {}
-        for arg in args:
-            arg = arg.replace(')', '')
-            key, value = arg.split('(')
-            cleaned_args[key] = value
+        # parse the arguments passed through line
+        raw_args = line.split(' ')
+        if (raw_args[0] == '' or '-h' in raw_args or '--help' in raw_args):
+            parser.print_help()
+            return
+        args = parser.parse_args(raw_args)
 
         # XSRF token setup
         url = 'http://localhost:8888/'
@@ -51,7 +69,7 @@ class GeopyterMagic(Magics):
         client.get(url)
         # add token to request header
         headers = {'X-XSRFToken': client.cookies['_xsrf']}
-        r = client.post(url+'geopyter', json=cleaned_args, headers=headers)
+        r = client.post(url+'geopyter', json=vars(args), headers=headers)
 
         css = [
             'http://localhost:8888/nbextensions/geopyter.css',
