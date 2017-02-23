@@ -1,5 +1,4 @@
 from geopyter.jupyter_endpoint.handler import GeopyterHandler
-
 from geopyter.magics import *
 
 def _jupyter_server_extension_paths():

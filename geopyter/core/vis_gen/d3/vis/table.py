@@ -1,3 +1,5 @@
+from geopyter.core.vis_gen.util.js_template_utility import append_div
+
 def make(data, vis_params):
     uuid = vis_params['id']
 
@@ -9,6 +11,8 @@ def make(data, vis_params):
         "let columns = [" + column_string + "];"
         ""
         "requirejs(['nbextensions/d3.min'], function(d3) {"
+        ""
+        + append_div(uuid) +
         ""
         "/* utility sorting functions */"
         "let stringCompare = function(a, b, ascending) {"
@@ -24,9 +28,6 @@ def make(data, vis_params):
         "    return a > b ? -1 : a == b ? 0 : 1;"
         "  return a > b ? 1 : a == b ? 0 : -1;"
         "};"
-        ""
-        "if (document.getElementById('" + uuid + "') === null)"
-        "  element.append($('<div/>', {id:'" + uuid + "'}));"
         ""
         "let table = d3.select('#" + uuid + "').append('table');"
         "let thead = table.append('thead');"

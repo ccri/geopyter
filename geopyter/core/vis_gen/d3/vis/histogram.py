@@ -1,3 +1,5 @@
+from geopyter.core.vis_gen.util.js_template_utility import append_div
+
 def make(data, vis_params):
     uuid = vis_params['id']
 
@@ -9,8 +11,7 @@ def make(data, vis_params):
         ""
         "requirejs(['nbextensions/d3.min'], function(d3) {"
         ""
-        "if (document.getElementById('" + uuid + "') === null)"
-        "  element.append($('<div/>', {id:'" + uuid + "'}));"
+        + append_div(uuid) +
         ""
         "let formatCount = d3.format(',.0f');"
         ""

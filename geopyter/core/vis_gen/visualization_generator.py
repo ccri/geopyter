@@ -58,7 +58,3 @@ class VisualizationGenerator:
             self.vis_type,
             self.vis_params
         )
-    
-    def _load_data(self):
-        f = open(self.data_path, 'r')
-        self.data = literal_eval(f.read())
