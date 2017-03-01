@@ -4,6 +4,8 @@ from uuid import uuid4 as uuid
 from geopyter.core.vis_gen.d3 import d3_generator
 from geopyter.core.vis_gen.leaflet import leaflet_generator
 
+import pickle
+
 # dict of currently supported visualization libraries
 # key = visualization library
 # val = default create_visualization() function for visualization library
@@ -38,16 +40,15 @@ class VisualizationGenerator:
 
         # check for default %geopyter call
         if (not params['vis']):
-            params['vis'] = 'd3.table'
-        self.vis_lib, self.vis_type = params.pop('vis').split('.')
-        self.data_path = params.pop('data')
+            params['vis'] = 'd3:table'
+        self.vis_lib, self.vis_type = params.pop('vis').split(':')
+        self.data = params.pop('data')
         self.vis_params = params
 
     def create_visulization(self):
         """Sends the visualization request to the specified visualization
             library"""
-        # first pass at loading data through python
-        self._load_data()
+
             
         # TODO: better error handling
         if (self.vis_lib not in vis_libs):

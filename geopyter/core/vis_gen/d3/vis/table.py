@@ -1,13 +1,15 @@
+import json
+
 from geopyter.core.vis_gen.util.js_template_utility import append_div
 
 def make(data, vis_params):
     uuid = vis_params['id']
 
-    data_string = ','.join(str(d) for d in data)
+    data_string = json.dumps(data)
     column_string = ','.join("'"+str(d)+"'" for d in data[0].keys())
 
     js_template = (
-        "let data = [" + data_string + "];"
+        "let data = " + data_string + ";"
         "let columns = [" + column_string + "];"
         ""
         "requirejs(['nbextensions/d3.min'], function(d3) {"
