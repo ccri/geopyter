@@ -1,7 +1,10 @@
 from IPython.core.magic import (Magics, magics_class, line_magic)
 from IPython.display import (HTML, Javascript)
 
+from geopyter.core.data_prep import load_data
+
 import argparse
+import pickle
 import requests
 
 @magics_class
@@ -62,6 +65,10 @@ class GeopyterMagic(Magics):
             return
         args = parser.parse_args(raw_args)
 
+        data_type, data_key = args.data.split(':')
+        loaded_data = load_data(data_key, data_type)
+        args.data = pickle.dumps(loaded_data)
+
         # XSRF token setup
         url = 'http://localhost:8888/'
         client = requests.Session()
@@ -76,7 +83,28 @@ class GeopyterMagic(Magics):
             'http://localhost:8888/nbextensions/leaflet.css'
         ]
         
+        print r.json()['js_code']
         return Javascript(r.json()['js_code'], css=css)
+
+    @line_magic
+    def test_data_loading(self, line=None):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--data',
+                            metavar='data',
+                            type=str,
+                            nargs='?',
+                            default='',
+                            help='data path')
+
+        # parse the arguments passed through line
+        raw_args = line.split(' ')
+        if (raw_args[0] == '' or '-h' in raw_args or '--help' in raw_args):
+            parser.print_help()
+            return
+        args = parser.parse_args(raw_args)
+
+        data_type, data_key = args.data.split(':')
+        loaded_data = load_data(data_key, data_type)
 
 def load_ipython_extension(ipython):
     ipython.register_magics(GeopyterMagic)
