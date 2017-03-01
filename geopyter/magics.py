@@ -1,9 +1,12 @@
 from IPython.core.magic import (Magics, magics_class, line_magic)
 from IPython.display import (HTML, Javascript)
 
-from geopyter.core.data_prep import load_data
+# from geopyter.core.data_prep import load_data
 
 import argparse
+import csv
+import json
+import os
 import pickle
 import requests
 
@@ -66,7 +69,7 @@ class GeopyterMagic(Magics):
         args = parser.parse_args(raw_args)
 
         data_type, data_key = args.data.split(':')
-        loaded_data = load_data(data_key, data_type)
+        loaded_data = self._load_data(data_key, data_type)
         args.data = pickle.dumps(loaded_data)
 
         # XSRF token setup
@@ -83,7 +86,7 @@ class GeopyterMagic(Magics):
             'http://localhost:8888/nbextensions/leaflet.css'
         ]
         
-        print r.json()['js_code']
+        # print r.json()['js_code']
         return Javascript(r.json()['js_code'], css=css)
 
     @line_magic
@@ -104,7 +107,30 @@ class GeopyterMagic(Magics):
         args = parser.parse_args(raw_args)
 
         data_type, data_key = args.data.split(':')
-        loaded_data = load_data(data_key, data_type)
+        loaded_data = self._load_data(data_key, data_type)
+
+    def _load_data(self, data_key, data_type):
+        data_types = {
+            'file': self.__load_file,
+            'var': self.__load_var
+        }
+
+        return data_types[data_type](data_key)
+
+    def __load_file(self, data_key):
+        f = open(data_key, 'r')
+        fn, ext = os.path.splitext(data_key)
+        ext = ext.lower()
+
+        if (ext == '.csv'):
+            return list(csv.DictReader(f.read().splitlines(), delimiter=','))
+        elif (ext == '.tsv'):
+            return list(csv.DictReader(f.read().splitlines(), delimiter='\t'))
+        elif (ext == '.json'):
+            return json.loads(f.read())
+
+    def __load_var(self, data_key):
+        return self.shell.user_ns[data_key]
 
 def load_ipython_extension(ipython):
     ipython.register_magics(GeopyterMagic)
