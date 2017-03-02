@@ -1,8 +1,6 @@
 from IPython.core.magic import (Magics, magics_class, line_magic)
 from IPython.display import (HTML, Javascript)
 
-# from geopyter.core.data_prep import load_data
-
 import argparse
 import csv
 import json
@@ -62,14 +60,13 @@ class GeopyterMagic(Magics):
                             help='value to treat as y')
 
         # parse the arguments passed through line
-        raw_args = line.split(' ')
+        raw_args = line.split()
         if (raw_args[0] == '' or '-h' in raw_args or '--help' in raw_args):
             parser.print_help()
             return
         args = parser.parse_args(raw_args)
 
-        data_type, data_key = args.data.split(':')
-        loaded_data = self._load_data(data_key, data_type)
+        loaded_data = self._load_data(args.data)
         args.data = pickle.dumps(loaded_data)
 
         # XSRF token setup
@@ -100,7 +97,7 @@ class GeopyterMagic(Magics):
                             help='data path')
 
         # parse the arguments passed through line
-        raw_args = line.split(' ')
+        raw_args = line.split()
         if (raw_args[0] == '' or '-h' in raw_args or '--help' in raw_args):
             parser.print_help()
             return
@@ -109,11 +106,13 @@ class GeopyterMagic(Magics):
         data_type, data_key = args.data.split(':')
         loaded_data = self._load_data(data_key, data_type)
 
-    def _load_data(self, data_key, data_type):
+    def _load_data(self, data):
         data_types = {
             'file': self.__load_file,
             'var': self.__load_var
         }
+
+        data_type, data_key = data.split(':')
 
         return data_types[data_type](data_key)
 

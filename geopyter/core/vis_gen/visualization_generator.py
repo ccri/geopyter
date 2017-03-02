@@ -4,8 +4,6 @@ from uuid import uuid4 as uuid
 from geopyter.core.vis_gen.d3 import d3_generator
 from geopyter.core.vis_gen.leaflet import leaflet_generator
 
-import pickle
-
 # dict of currently supported visualization libraries
 # key = visualization library
 # val = default create_visualization() function for visualization library
