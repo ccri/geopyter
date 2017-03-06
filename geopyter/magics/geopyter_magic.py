@@ -1,5 +1,5 @@
 from IPython.core.magic import (Magics, magics_class, line_magic)
-from IPython.display import (HTML, Javascript)
+from IPython.display import Javascript
 
 import argparse
 import csv
@@ -10,6 +10,8 @@ import requests
 
 @magics_class
 class GeopyterMagic(Magics):
+    def __init__(self, shell):
+        super(GeopyterMagic, self).__init__(shell)
 
     @line_magic
     def geopyter(self, line=None):
@@ -34,34 +36,43 @@ class GeopyterMagic(Magics):
         """
 
         parser = argparse.ArgumentParser()
-        parser.add_argument('--data',
+        parser.add_argument('-d',
+                            '--data',
                             metavar='data',
                             type=str,
                             nargs='?',
-                            default='',
-                            help='path to the data file')
-        parser.add_argument('--vis',
+                            default=None,
+                            help='path to the data')
+        parser.add_argument('-v',
+                            '--vis',
                             metavar='vis',
                             type=str,
                             nargs='?',
                             default=None,
                             help='type of visualization')
-        parser.add_argument('--x',
+        parser.add_argument('-x',
+                            '--x',
                             metavar='x',
                             type=str,
                             nargs='?',
                             default=None,
                             help='value to treat as x')
-        parser.add_argument('--y',
+        parser.add_argument('-y',
+                            '--y',
                             metavar='y',
                             type=str,
                             nargs='?',
                             default=None,
                             help='value to treat as y')
 
+        # catch empty args
+        if (not line):
+            parser.print_help()
+            return
+
         # parse the arguments passed through line
         raw_args = line.split()
-        if (raw_args[0] == '' or '-h' in raw_args or '--help' in raw_args):
+        if ('-h' in raw_args or '--help' in raw_args):
             parser.print_help()
             return
         args = parser.parse_args(raw_args)
@@ -98,7 +109,7 @@ class GeopyterMagic(Magics):
 
         # parse the arguments passed through line
         raw_args = line.split()
-        if (raw_args[0] == '' or '-h' in raw_args or '--help' in raw_args):
+        if (raw_args == None or '-h' in raw_args or '--help' in raw_args):
             parser.print_help()
             return
         args = parser.parse_args(raw_args)
