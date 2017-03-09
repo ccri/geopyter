@@ -1,5 +1,6 @@
 from IPython.core.magic import (Magics, magics_class, line_magic)
 from IPython.display import Javascript
+from jupyter_core.paths import jupyter_path
 
 import argparse
 import csv
@@ -7,6 +8,8 @@ import json
 import os
 import pickle
 import requests
+
+pjoin = os.path.join
 
 @magics_class
 class GeopyterMagic(Magics):
@@ -36,6 +39,10 @@ class GeopyterMagic(Magics):
         """
 
         parser = argparse.ArgumentParser()
+        parser.add_argument('-debug',
+                            '--debug',
+                            action='store_true',
+                            help='enable debug')
         parser.add_argument('-d',
                             '--data',
                             metavar='data',
@@ -89,12 +96,12 @@ class GeopyterMagic(Magics):
         headers = {'X-XSRFToken': client.cookies['_xsrf']}
         r = client.post(url+'geopyter', json=vars(args), headers=headers)
 
-        css = [
-            'http://localhost:8888/nbextensions/geopyter.css',
-            'http://localhost:8888/nbextensions/leaflet.css'
-        ]
+        jupyter_path_subdirs = ['nbextensions']
+        css_files = ['geopyter.css', 'leaflet.css']
+        css = self._load_css(jupyter_path_subdirs, css_files)
         
-        # print r.json()['js_code']
+        if args.debug:
+            print r.json()['js_code']
         return Javascript(r.json()['js_code'], css=css)
 
     @line_magic
@@ -117,9 +124,21 @@ class GeopyterMagic(Magics):
         data_type, data_key = args.data.split(':')
         loaded_data = self._load_data(data_key, data_type)
 
+    def _load_css(self, subdirs, css_files):
+        css = []
+        for subdir in subdirs:
+            for f in css_files:
+                css_file = pjoin(subdir, f)
+                if (os.path.isfile(css_file)):
+                    css.append(css_file)
+                    css_files.remove(f)
+
+        return css
+
     def _load_data(self, data):
         data_types = {
             'file': self.__load_file,
+            'rdd': self.__load_rdd,
             'var': self.__load_var
         }
 
@@ -138,6 +157,9 @@ class GeopyterMagic(Magics):
             return list(csv.DictReader(f.read().splitlines(), delimiter='\t'))
         elif (ext == '.json'):
             return json.loads(f.read())
+
+    def __load_rdd(self, data_key):
+        return self.shell.user_ns[data_key].collect()
 
     def __load_var(self, data_key):
         return self.shell.user_ns[data_key]
