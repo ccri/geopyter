@@ -99,10 +99,12 @@ class GeopyterMagic(Magics):
         jupyter_path_subdirs = ['nbextensions']
         css_files = ['geopyter.css', 'leaflet.css']
         css = self._load_css(jupyter_path_subdirs, css_files)
+
+        # print css
         
         if args.debug:
             print r.json()['js_code']
-        return Javascript(r.json()['js_code'], css=css)
+        return Javascript(r.json()['js_code'])
 
     @line_magic
     def test_data_loading(self, line=None):
@@ -126,12 +128,13 @@ class GeopyterMagic(Magics):
 
     def _load_css(self, subdirs, css_files):
         css = []
-        for subdir in subdirs:
+        jupyter_subdirs = jupyter_path(*subdirs)
+        for subdir in jupyter_subdirs:
             for f in css_files:
                 css_file = pjoin(subdir, f)
                 if (os.path.isfile(css_file)):
                     css.append(css_file)
-                    css_files.remove(f)
+                    # css_files.remove(f)
 
         return css
 
