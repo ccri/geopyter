@@ -96,15 +96,15 @@ class GeopyterMagic(Magics):
         headers = {'X-XSRFToken': client.cookies['_xsrf']}
         r = client.post(url+'geopyter', json=vars(args), headers=headers)
 
-        jupyter_path_subdirs = ['nbextensions']
-        css_files = ['geopyter.css', 'leaflet.css']
-        css = self._load_css(jupyter_path_subdirs, css_files)
+        # jupyter_path_subdirs = ['nbextensions']
+        css_files = ['/nbextensions/geopyter.css', '/nbextensions/leaflet.css']
+        # css = self._load_css(jupyter_path_subdirs, css_files)
 
         # print css
         
         if args.debug:
             print r.json()['js_code']
-        return Javascript(r.json()['js_code'])
+        return Javascript(r.json()['js_code'], css=css_files)
 
     @line_magic
     def test_data_loading(self, line=None):
