@@ -1,6 +1,5 @@
-from geopyter.jupyter_endpoint.handler import GeopyterHandler
-
-from geopyter.magics import *
+from geopyter.serverextension.geopyter_handler import GeopyterHandler
+from geopyter.magics.geopyter_magic import *
 
 def _jupyter_server_extension_paths():
     return [{

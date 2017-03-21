@@ -1,1 +1,1 @@
-__all__ = ['histogram', 'table', 'timeseries']
+__all__ = ['console_log', 'histogram', 'table', 'timeseries']

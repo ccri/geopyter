@@ -1,3 +1,5 @@
+from geopyter.core.vis_gen.util.js_template_utility import append_div
+
 def make(data, vis_params):
     uuid = vis_params['id']
 
@@ -9,8 +11,7 @@ def make(data, vis_params):
         ""
         "requirejs(['nbextensions/d3.min'], function(d3) {"
         ""
-        "if (document.getElementById('" + uuid + "') === null)"
-        "  element.append($('<div/>', {id:'" + uuid + "'}));"
+        + append_div(uuid) +
         ""
         "let formatCount = d3.format(',.0f');"
         ""
@@ -26,6 +27,11 @@ def make(data, vis_params):
         "let g = svg.append('g')"
         "    .attr('transform', 'translate('+mgn.left+','+mgn.top+')');"
         ""
+        # ""
+        # "console.log(d3.min(data, function(d) { return d; }));"
+        # "console.log(d3.max(data, function(d) { return d; }));"
+        # ""
+        # ""
         "let histogram = d3.histogram()(data);"
         "let xScale = d3.scaleLinear().rangeRound([0, wdt])"
         "    .domain(["

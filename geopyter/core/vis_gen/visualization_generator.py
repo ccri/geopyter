@@ -38,16 +38,15 @@ class VisualizationGenerator:
 
         # check for default %geopyter call
         if (not params['vis']):
-            params['vis'] = 'd3.table'
-        self.vis_lib, self.vis_type = params.pop('vis').split('.')
-        self.data_path = params.pop('data')
+            params['vis'] = 'd3:table'
+        self.vis_lib, self.vis_type = params.pop('vis').split(':')
+        self.data = params.pop('data')
         self.vis_params = params
 
     def create_visulization(self):
         """Sends the visualization request to the specified visualization
             library"""
-        # first pass at loading data through python
-        self._load_data()
+
             
         # TODO: better error handling
         if (self.vis_lib not in vis_libs):
@@ -58,7 +57,3 @@ class VisualizationGenerator:
             self.vis_type,
             self.vis_params
         )
-    
-    def _load_data(self):
-        f = open(self.data_path, 'r')
-        self.data = literal_eval(f.read())

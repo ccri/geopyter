@@ -1,14 +1,20 @@
+import json
+
+from geopyter.core.vis_gen.util.js_template_utility import append_div
+
 def make(data, vis_params):
     uuid = vis_params['id']
 
-    data_string = ','.join(str(d) for d in data)
+    data_string = json.dumps(data[:1000])
     column_string = ','.join("'"+str(d)+"'" for d in data[0].keys())
 
     js_template = (
-        "let data = [" + data_string + "];"
+        "let data = " + data_string + ";"
         "let columns = [" + column_string + "];"
         ""
         "requirejs(['nbextensions/d3.min'], function(d3) {"
+        ""
+        + append_div(uuid) +
         ""
         "/* utility sorting functions */"
         "let stringCompare = function(a, b, ascending) {"
@@ -25,9 +31,14 @@ def make(data, vis_params):
         "  return a > b ? 1 : a == b ? 0 : -1;"
         "};"
         ""
-        "if (document.getElementById('" + uuid + "') === null)"
-        "  element.append($('<div/>', {id:'" + uuid + "'}));"
         ""
+        # "let svg = d3.select('#" + uuid + "')"
+        # "    .append('svg');"
+        # "        .attr('viewBox', '0 0 960 480')"
+        # "        .attr('width', 960)"
+        # "        .attr('height', 480);"
+        # ""
+        # "let table = svg.append('table');"
         "let table = d3.select('#" + uuid + "').append('table');"
         "let thead = table.append('thead');"
         "let tbody = table.append('tbody');"
